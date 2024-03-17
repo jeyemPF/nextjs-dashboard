@@ -6,6 +6,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { signIn } from '@/app/auth';
 import { AuthError } from 'next-auth';
+import { signOut } from '@/app/auth';
 
 
 export type State = {
@@ -126,5 +127,14 @@ export async function authenticate(
       }
     }
     throw error;
+  }
+}
+
+export async function signOutUser() {
+  try {
+    await signOut({ redirect: false }); // You can set redirect to true if you want NextAuth to handle the redirection
+  } catch (error) {
+    console.error('Error signing out:', error);
+    throw new Error('Failed to sign out.');
   }
 }

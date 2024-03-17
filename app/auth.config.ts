@@ -1,21 +1,27 @@
 import type { NextAuthConfig } from 'next-auth';
- 
-export const authConfig = {
+
+export const authConfig: NextAuthConfig = {
   pages: {
     signIn: '/login',
+    signOut: '/dashboard', // Redirect to dashboard after sign-out
   },
+
   callbacks: {
-    authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user;
-      const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
-      if (isOnDashboard) {``
-        if (isLoggedIn) return true;
-        return false; // Redirect unauthenticated users to login page
-      } else if (isLoggedIn) {
-        return Response.redirect(new URL('/dashboard', nextUrl));
+    async signIn({ user }) {
+      if (user) {
+        return '/dashboard';
       }
-      return true;
+      return '/login';
     },
   },
+ 
   providers: [], // Add providers with an empty array for now
-} satisfies NextAuthConfig;
+};
+
+// In your actual application code, you can handle sign-out redirection
+
+export async function signOut({ url }: { url: string }) {
+  // Implement your sign-out logic here, such as clearing session, cookies, etc.
+  // Then redirect to the desired URL, in this case, the login page
+  window.location.href = '/login';
+}
